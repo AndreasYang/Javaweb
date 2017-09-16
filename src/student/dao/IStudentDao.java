@@ -1,7 +1,9 @@
 package student.dao;
 
 import java.util.List;
+import java.util.Map;
 
+import student.pojo.Banji;
 import student.pojo.Student;
 import vo.Admin;
 
@@ -31,5 +33,31 @@ public interface IStudentDao {
 
 	public Admin findByNameAndPassword(String name, String password);
 
+	public int getBanjiTotalCount();
+
+	public List<Banji> findBanjiPageBeanList(int index, int pageSize);
+
+	public List<Banji> findBanji();
+	
+	public int addBanji(Banji banji);
+
+	public int deleteBanji(String classname);
+
+	public List<Banji> findCourse();
+
+	public int addCourse(Banji banji);
+
+	public int deleteCourse(String coursename);
+
+	public List<Banji> findCourse(String coursename);
+
+	public int updateCourse(Banji banji);
+
+	public int addBanjiCourse(Banji banji);
+
+	public List<Map<String, Object>> searchBanjiCourse(String classname);
+
+	public int deleteBanjiCourse(int parseInt);
+		
 
 }

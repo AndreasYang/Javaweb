@@ -3,6 +3,7 @@ package student.controller;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import jdk.nashorn.internal.ir.RuntimeNode.Request;
+import student.pojo.Banji;
 import student.pojo.Student;
 import student.service.IStudentService;
 import student.service.StudentServiceImpl;
@@ -154,8 +156,9 @@ public class StudentServlet extends BaseServlet {
 		String gender = req.getParameter("gender");
 		String age = req.getParameter("age");
 		String address = req.getParameter("address");
+		String banjiId= req.getParameter("banjiId");
 
-		Student student = new Student(Integer.parseInt(number), name, gender, Integer.parseInt(age), address);
+		Student student = new Student(Integer.parseInt(number), name, gender, Integer.parseInt(age), address, Integer.parseInt(banjiId));
 		IStudentService service = new StudentServiceImpl();
 
 		service.add(student);
@@ -184,7 +187,8 @@ public class StudentServlet extends BaseServlet {
 
 	}
 
-	private void searchByCondition(HttpServletRequest req, HttpServletResponse resp)throws IOException, ServletException {
+	private void searchByCondition(HttpServletRequest req, HttpServletResponse resp)
+			throws IOException, ServletException {
 		String name = req.getParameter("name");
 		String age = req.getParameter("age");
 		String gender = req.getParameter("gender");
@@ -206,30 +210,210 @@ public class StudentServlet extends BaseServlet {
 		req.setAttribute("searchCondition", searchCondition);
 		req.getRequestDispatcher("/jsp/searchStudent.jsp").forward(req, resp);
 	}
-	
-	private void CheckName(HttpServletRequest req, HttpServletResponse resp) throws IOException{
+
+	private void CheckName(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		String name = req.getParameter("name");
 		IStudentService service = new StudentServiceImpl();
 		boolean isExist = service.checkName(name);
-		String str = "{\"isExist\":"+isExist+"}";
+		String str = "{\"isExist\":" + isExist + "}";
 		resp.setContentType("text/html;charset=utf-8");
 		resp.getWriter().write(str);
 	}
-	
-	private void DeleteAll(HttpServletRequest req, HttpServletResponse resp) throws IOException{
+
+	private void DeleteAll(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		IStudentService service = new StudentServiceImpl();
 		String[] names = req.getParameterValues("selectNames");
 		service.deleteAll(names);
 		resp.sendRedirect(req.getContextPath() + "/student?method=PageList");
 	}
+
+	private void BanjiList(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+		IStudentService service = new StudentServiceImpl();
+		List<Banji> list = service.findBanji();
+		System.out.println(list);
+		req.setAttribute("list", list);
+		req.getRequestDispatcher("/jsp/banji_list.jsp").forward(req, resp);
+	}
 	
-	private void getOnLineList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	private void AddBanji(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+		String classname = req.getParameter("classname");
+		Banji banji = new Banji(classname);
+		IStudentService service = new StudentServiceImpl();
+		service.addBanji(banji);
+		
+		resp.sendRedirect(req.getContextPath()+"/student?method=BanjiList");
+	}
+
+	private void BanjiCoursePageList(HttpServletRequest req, HttpServletResponse resp)
+			throws IOException, ServletException {
+		String pageIndexStr = req.getParameter("pageIndex");
+		String pageSizeStr = req.getParameter("pageSize");
+		int pageIndex = 1;
+		if (pageIndexStr != null && !pageIndexStr.equals("")) {
+			pageIndex = Integer.parseInt(pageIndexStr);
+		}
+		int pageSize = 4;
+		if (pageSizeStr != null && !pageSizeStr.equals("")) {
+			pageSize = Integer.parseInt(pageSizeStr);
+		}
+
+		IStudentService service = new StudentServiceImpl();
+		PageBean pageBean = service.getBanjiPageBean(pageIndex, pageSize);
+		System.out.println(pageBean);
+		req.setAttribute("pageBean", pageBean);
+		req.getRequestDispatcher("/jsp/banji_course_list.jsp").forward(req, resp);
+	}
+	
+	private void DeleteBanjie(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		String classname = req.getParameter("name");
+		IStudentService service = new StudentServiceImpl();
+
+		service.deleteBanjie(classname);
+
+		resp.sendRedirect(req.getContextPath() + "/student?method=BanjiList");
+	}
+	
+	private void CourseList(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+		IStudentService service = new StudentServiceImpl();
+		List<Banji> list = service.findCourse();
+		System.out.println(list);
+		req.setAttribute("list", list);
+		req.getRequestDispatcher("/jsp/course_list.jsp").forward(req, resp);
+	}
+	
+	private void DeleteAllBanji(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		IStudentService service = new StudentServiceImpl();
+		String[] names = req.getParameterValues("selectClassnames");
+		service.deleteAllBanji(names);
+		resp.sendRedirect(req.getContextPath() + "/student?method=BanjiList");
+	}
+
+	private void AddCourse(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+		String coursename = req.getParameter("coursename");
+		String points = req.getParameter("points");
+		Banji banji = new Banji(coursename, Integer.parseInt(points));
+		IStudentService service = new StudentServiceImpl();
+		service.addCourse(banji);
+		
+		resp.sendRedirect(req.getContextPath()+"/student?method=CourseList");
+	}
+	
+	private void DeleteCourse(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		String coursename = req.getParameter("name");
+		IStudentService service = new StudentServiceImpl();
+
+		service.deleteCourse(coursename);
+
+		resp.sendRedirect(req.getContextPath() + "/student?method=CourseList");
+	}
+	
+	private void DeleteAllCourse(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		IStudentService service = new StudentServiceImpl();
+		String[] coursenames = req.getParameterValues("selectCoursenames");
+		service.deleteAllCourse(coursenames);
+		resp.sendRedirect(req.getContextPath() + "/student?method=CourseList");
+	}
+	
+	private void ToUpdateCourse(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		String coursename = req.getParameter("name");
+		IStudentService service = new StudentServiceImpl();
+		List<Banji> list = service.findcourse(coursename);
+		req.setAttribute("list", list);
+		req.getRequestDispatcher("/jsp/course_update.jsp").forward(req, resp);
+
+	}
+	
+	private void UpdateCourse(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		String coursename = req.getParameter("searchcoursename");
+		
+		String points = req.getParameter("points");
+
+		Banji banji = new Banji(coursename, Integer.parseInt(points));
+		IStudentService service = new StudentServiceImpl();
+
+		service.updateCourse(banji);
+
+		resp.sendRedirect(req.getContextPath() + "/student?method=CourseList");
+	}
+	
+	private void AddBanjiCourse(HttpServletRequest req, HttpServletResponse resp)
+			throws IOException, ServletException {
+		String banjiId = req.getParameter("banjiId");
+		String courseId = req.getParameter("courseId");
+		System.out.println(banjiId);
+		System.out.println(courseId);
+		
+		IStudentService service = new StudentServiceImpl();
+		Banji banji = new Banji(Integer.parseInt(banjiId), Integer.parseInt(courseId));
+		service.addBanjiCourse(banji);
+		
+		resp.sendRedirect(req.getContextPath()+"/student?method=BanjiCoursePageList");
+	}
+	
+	private void SearchBanjiCourse(HttpServletRequest req, HttpServletResponse resp)
+			throws IOException, ServletException {
+		String classname = req.getParameter("classname");
+		IStudentService service = new StudentServiceImpl();
+		List<Map<String, Object>> list = service.searchBanjiCourse(classname);
+		req.setAttribute("list", list);
+		System.out.println(list);
+		req.getRequestDispatcher("/jsp/banji_course_search.jsp").forward(req, resp);;
+		
+	}
+	
+	private void DeleteBanjiCourse(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		String bcId = req.getParameter("bcId");
+		IStudentService service = new StudentServiceImpl();
+
+		service.deleteBanjiCourse(Integer.parseInt(bcId));
+
+		resp.sendRedirect(req.getContextPath() + "/student?method=BanjiCoursePageList");
+	}
+	
+	
+	private void getOnLineList(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		request.getRequestDispatcher("/jsp/onlineAdminList.jsp").forward(request, response);
 	}
+
 	private void getSearchPage(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		req.getRequestDispatcher("/jsp/searchStudent.jsp").forward(req, resp);
 	}
+
 	private void getAddPage(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		IStudentService service = new StudentServiceImpl();
+		List<Banji> banji = service.findBanji();
+		System.out.println(banji);
+		req.setAttribute("banji", banji);
 		req.getRequestDispatcher("/jsp/addStudent.jsp").forward(req, resp);
+	}
+	
+	private void getAddBanjiPage(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		req.getRequestDispatcher("/jsp/banji_add.jsp").forward(req, resp);
+	}
+	
+	private void getAddCoursePage(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		req.getRequestDispatcher("/jsp/course_add.jsp").forward(req, resp);
+	}
+	
+	private void getSearchCoursePage(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		req.getRequestDispatcher("/jsp/course_search.jsp").forward(req, resp);
+	}
+	
+	private void getAddBanjiCoursePage(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		IStudentService service = new StudentServiceImpl();
+		List<Banji> banji = service.findBanji();
+		System.out.println(banji);
+		req.setAttribute("banji", banji);
+		
+		List<Banji> course = service.findCourse();
+		System.out.println(course);
+		req.setAttribute("course", course);
+		req.getRequestDispatcher("/jsp/banji_course_add.jsp").forward(req, resp);
+	}
+	
+	private void getSearchBanjiCoursePage(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		req.getRequestDispatcher("/jsp/banji_course_search.jsp").forward(req, resp);
 	}
 }

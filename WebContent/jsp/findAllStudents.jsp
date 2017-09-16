@@ -65,10 +65,9 @@
 				<form id="mainForm"
 					action="${pageContext.request.contextPath}/student?method=DeleteAll"
 					method="post">
-					<table
-						class="align-center table table-striped table-bordered table-hover table-condensed text-center">
+					<table class="align-center table table-striped table-bordered table-hover table-condensed text-center">
 						<tr>
-							<td colspan="9">所有学生信息</td>
+							<td colspan="10">所有学生信息</td>
 						</tr>
 						<tr>
 							<td><input type="checkbox" id="selectAll"
@@ -79,6 +78,7 @@
 							<td>年龄</td>
 							<td>性别</td>
 							<td>家庭所在地</td>
+							<td>班级</td>
 							<td>修改</td>
 							<td>删除</td>
 						</tr>
@@ -93,6 +93,7 @@
 								<td>${student.age}</td>
 								<td>${student.gender}</td>
 								<td>${student.address}</td>
+								<td><a href="/Java1707web/student?method=SearchBanjiCourse&classname=${student.classname}">${student.classname}</a></td>
 								<td><a
 									href="${pageContext.request.contextPath}/student?method=ToUpdateStudent&searchname=${student.name}">修改</a></td>
 								<td><a

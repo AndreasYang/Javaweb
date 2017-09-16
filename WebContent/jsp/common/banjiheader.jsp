@@ -16,8 +16,8 @@
         <!--导航-->
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="${pageContext.request.contextPath}/student?method=PageList"><span class="glyphicon glyphicon-home"></span>&nbsp;&nbsp;学生管理</a></li>
-                <li><a href="${pageContext.request.contextPath}/student?method=BanjiList"><span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;班级管理</a></li>
+                <li><a href="${pageContext.request.contextPath}/student?method=PageList"><span class="glyphicon glyphicon-home"></span>&nbsp;&nbsp;学生管理</a></li>
+                <li class="active"><a href="${pageContext.request.contextPath}/student?method=BanjiList"><span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;班级管理</a></li>
                 <li><a href="${pageContext.request.contextPath}/student?method=CourseList"><span class="glyphicon glyphicon-list-alt"></span>&nbsp;&nbsp;课程管理</a></li>
                 <li><a href="${pageContext.request.contextPath}/student?method=BanjiCoursePageList"><span class="glyphicon glyphicon-tags"></span>&nbsp;&nbsp;教务管理</a></li>
             </ul>

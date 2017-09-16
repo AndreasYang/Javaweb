@@ -3,6 +3,7 @@ package vo;
 import java.io.Serializable;
 import java.util.List;
 
+import student.pojo.Banji;
 import student.pojo.Student;
 
 public class PageBean implements Serializable {
@@ -12,6 +13,7 @@ public class PageBean implements Serializable {
 	private Integer totalPage;
 	private Integer totalCount;
 	private List<Student> list;
+	private List<Banji> list2;
 	public PageBean() {
 		super();
 	}
@@ -23,6 +25,7 @@ public class PageBean implements Serializable {
 		this.totalCount = totalCount;
 		this.list = list;
 	}
+	
 	public Integer getPageIndex() {
 		return pageIndex;
 	}
@@ -53,11 +56,18 @@ public class PageBean implements Serializable {
 	public void setList(List<Student> list) {
 		this.list = list;
 	}
+	
+	
+	public List<Banji> getList2() {
+		return list2;
+	}
+	public void setList2(List<Banji> list2) {
+		this.list2 = list2;
+	}
 	@Override
 	public String toString() {
 		return "PageBean [pageIndex=" + pageIndex + ", pageSize=" + pageSize + ", totalPage=" + totalPage
-				+ ", totalCount=" + totalCount + ", list=" + list + "]";
-	}
-	
+				+ ", totalCount=" + totalCount + ", list=" + list + ", list2=" + list2 + "]";
+	}	
 	
 }

@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+ <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -75,6 +76,14 @@
 				<div class="form-group">
 				<label for="address">地址</label>
 				<input type="text" class="form-control" name="address" id="address"/>
+				</div>
+				<div class="form-group">
+					<label for="classname">班级</label>
+					<select class="form-control" name="banjiId">
+						<c:forEach items="${banji}" var="banji">
+							<option value="${banji.banjiId}">${banji.classname}</option>
+						</c:forEach>
+					</select>
 				</div>
 				<button type="submit" class="btn btn-success btn-lg" >保存</button>
 			</form>
